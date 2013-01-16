@@ -5,6 +5,7 @@ module Rock
     end
 end
 
+require 'models/blueprints/corridor_navigation/tasks'
 require 'models/blueprints/corridor_navigation/single_corridor'
 require 'models/blueprints/corridor_navigation/servoing'
 require 'models/blueprints/corridor_navigation/following'

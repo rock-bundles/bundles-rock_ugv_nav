@@ -5,8 +5,8 @@ module Rock
         class TraversabilityMap < Syskit::Composition
             add MapGeneratorSrv, :as => 'map_builder'
             add_main_task CorridorPlanner::Traversability, :as => 'traversability_builder'
-            export traversability_builder.traversability_map
-            map_builder_child.map_port => traversability_builder_child.map_port
+            export traversability_builder_child.traversability_map_port
+            map_builder_child.map_port.connect_to traversability_builder_child.mls_map_port
         end
     end
 end

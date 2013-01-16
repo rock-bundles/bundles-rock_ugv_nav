@@ -1,3 +1,4 @@
+require 'models/blueprints/corridor_navigation/tasks'
 require 'models/blueprints/corridor_navigation/servoing'
 
 module Rock

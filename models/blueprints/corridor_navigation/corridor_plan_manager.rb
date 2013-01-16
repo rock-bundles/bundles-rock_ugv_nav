@@ -1,3 +1,4 @@
+require 'models/blueprints/corridor_navigation/tasks'
 require 'models/tasks/move_to'
 require 'base/float'
 
