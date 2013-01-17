@@ -1,5 +1,6 @@
 require 'models/blueprints/corridor_navigation/tasks'
 require 'models/blueprints/pose'
+require 'models/blueprints/sensors'
 require 'models/blueprints/control'
 using_task_library 'trajectory_follower'
 using_task_library 'corridor_navigation'
