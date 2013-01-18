@@ -23,7 +23,7 @@ module Rock
             add Base::RelativePoseSrv, :as => 'pose'
             add Base::LaserRangeFinderSrv, :as => 'laser'
             add(Base::ControlLoop, :as => 'control').
-                use(pose, 'controller' => TrajectoryFollower::Task)
+                use('pose' => pose_child, 'controller' => TrajectoryFollower::Task)
             add_main_task(CorridorNavigation::ServoingTask, :as => 'servoing')
             pose_child.pose_samples_port.connect_to servoing_child.odometry_samples_port
             laser_child.connect_to servoing_child
