@@ -9,7 +9,8 @@ module Rock
         syskit_profile 'Skid4' do
             use Base::Motion2DControlledSystemSrv =>
                 Base::ControlLoop.use('controller' => Skid4Control::SimpleController)
-            use SLAM::OdometrySrv => Odometry::Skid4OdometryTask
+            use SLAM::OdometrySrv =>
+                SLAM::Odometry.use('odometry' => Odometry::Skid4OdometryTask)
 
             define 'joystick_drive', Base::ControlLoop.use('controller' => Controldev::JoystickTask)
             define 'local_navigation', Rock::CorridorNavigation::Servoing.use(
