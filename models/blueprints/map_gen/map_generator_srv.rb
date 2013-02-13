@@ -1,3 +1,4 @@
+import_types_from 'envire'
 module Rock
     module MapGen
         data_service_type 'MapGeneratorSrv' do
