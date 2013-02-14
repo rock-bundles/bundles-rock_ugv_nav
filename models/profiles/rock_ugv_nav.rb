@@ -1,3 +1,4 @@
+require 'models/blueprints/odometry'
 require 'models/blueprints/control'
 require 'models/blueprints/corridor_navigation'
 using_task_library 'skid4_control'
