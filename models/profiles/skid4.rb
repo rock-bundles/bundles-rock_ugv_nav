@@ -1,6 +1,7 @@
 require 'models/blueprints/odometry'
 require 'models/blueprints/control'
 require 'models/blueprints/corridor_navigation'
+require 'models/blueprints/map_gen'
 using_task_library 'skid4_control'
 using_task_library 'odometry'
 
@@ -17,6 +18,7 @@ module Rock
                 'pose' => SLAM::OdometrySrv)
             define 'explore', Rock::CorridorNavigation::Explore.use(
                 'pose' => SLAM::OdometrySrv)
+            define 'local_map', Rock::MapGen::LocalMap.use('pose' => SLAM::OdometrySrv)
         end
     end
 end
