@@ -1,7 +1,7 @@
 require 'models/blueprints/odometry'
 require 'models/blueprints/control'
 require 'models/blueprints/corridor_navigation'
-require 'models/blueprints/map_gen'
+require 'models/blueprints/map_gen/local_map'
 using_task_library 'skid4_control'
 using_task_library 'odometry'
 
