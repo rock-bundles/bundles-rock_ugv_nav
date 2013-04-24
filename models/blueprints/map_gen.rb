@@ -4,6 +4,7 @@ module Rock
     end
 end
 
+require 'models/blueprints/odometry'
 require 'models/blueprints/map_gen/map_generator_srv'
 require 'models/blueprints/map_gen/local_map'
 require 'models/blueprints/map_gen/eslam'
