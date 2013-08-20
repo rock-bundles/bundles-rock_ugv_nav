@@ -18,9 +18,9 @@ module Rock
             laser_child.connect_to eslam_child
 
             conf 'localization',
-                'eslam' => ['default', 'localization']
+                eslam_child => ['default', 'localization']
             conf 'mapping',
-                'eslam' => ['default', 'mapping']
+                eslam_child => ['default', 'mapping']
 
             # TODO: synchronize the eSLAM start pose with the current pose
             # This is not strictly required, but makes the eSLAM map more

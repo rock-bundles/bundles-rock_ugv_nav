@@ -26,7 +26,7 @@ class Odometry::ContactPointTask
 end
 
 
-SLAM::Odometry.specialize 'odometry' => Odometry::ContactPointTask do
+SLAM::Odometry.specialize SLAM::Odometry.odometry_child => Odometry::ContactPointTask do
     add SLAM::BodyContactStateSrv, :as => 'contact_points'
     contact_points_child.connect_to(odometry_child)
 end
