@@ -13,7 +13,10 @@ module Rock
             use SLAM::OdometrySrv =>
                 SLAM::Odometry.use('odometry' => Odometry::Skid4OdometryTask)
 
-            define 'joystick_drive', Base::ControlLoop.use('controller' => Controldev::JoystickTask)
+            define 'joystick_drive', Base::ControlLoop.
+                prefer_specializations('controller' => Base::Motion2DControllerSrv,
+                                       'controlled_system' => Base::Motion2DControlledSystemSrv).
+                use('controller' => Controldev::JoystickTask)
             define 'local_navigation', Rock::CorridorNavigation::Servoing.use(
                 'pose' => SLAM::OdometrySrv)
             define 'explore', Rock::CorridorNavigation::Explore.use(
