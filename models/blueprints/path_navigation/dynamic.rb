@@ -1,4 +1,5 @@
 require 'rock/models/blueprints/control'
+require 'rock_ugv_nav/models/blueprints/map_gen/map_generator_srv'
 using_task_library 'trajectory_follower'
 
 module Rock
@@ -22,6 +23,8 @@ module Rock
             # The path following
             add(Base::ControlLoop, :as => 'path_follower').
                 use('controller' => TrajectoryFollower::Task, 'pose' => pose_child)
+            # The map generator
+            add Rock::MapGen::TraversabilitySrv, :as => 'traversability_mapping'
         end
     end
 end
