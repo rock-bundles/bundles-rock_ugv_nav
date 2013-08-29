@@ -25,6 +25,11 @@ module Rock
                 use('controller' => TrajectoryFollower::Task, 'pose' => pose_child)
             # The map generator
             add Rock::MapGen::TraversabilitySrv, :as => 'traversability_mapping'
+
+            traversability_mapping_child.map_port.connect_to planner_child
+            pose_child.pose_samples_port.connect_to        planner_child.robot_pose_port
+            target_pose_child.pose_samples_port.connect_to planner_child.target_pose_port
+            planner_child.connect_to path_follower_child
         end
     end
 end
