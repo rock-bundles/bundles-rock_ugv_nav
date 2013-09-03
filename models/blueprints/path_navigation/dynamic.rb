@@ -10,13 +10,13 @@ module Rock
         class Dynamic < MapGen::PipelineBase
             # The target X position in the provided map
             #
-            # It can be unset, in which case the target_pose child must be given
+            # It can be unset, in which case the target_position child must be given
             #
             # @return [Float
             argument :target_x, :default => nil
             # The target Y position in the provided map
             #
-            # It can be unset, in which case the target_pose child must be given
+            # It can be unset, in which case the target_position child must be given
             #
             # @return [Float
             argument :target_y, :default => nil
@@ -26,7 +26,7 @@ module Rock
             # The target's pose in the global map
             #
             # If not given, the {#target_x} and {#target_y} arguments should be set
-            add_optional Base::PoseSrv, :as => 'target_pose'
+            add_optional TargetPositionSrv, :as => 'target_position'
             # The path planner
             add DynamicPathPlannerSrv, :as => 'planner'
             # The path following
@@ -36,18 +36,18 @@ module Rock
             overload map_source_child, MapGen::TraversabilitySrv
 
             event :start do |context|
-                if !(target_x && target_y) && !find_child_from_role(target_pose_child)
-                    raise ArgumentError, "you must either provide the target_x/target_y arguments or give the target_pose child"
-                elsif target_x && target_y && find_child_from_role(target_pose_child)
-                    raise ArgumentError, "you cannot both give the target_pose child and set the target_x and target_y arguments"
+                if !(target_x && target_y) && !find_child_from_role('target_position')
+                    raise ArgumentError, "you must either provide the target_x/target_y arguments or give the target_position child"
+                elsif target_x && target_y && find_child_from_role('target_position')
+                    raise ArgumentError, "you cannot both give the target_position child and set the target_x and target_y arguments"
                 end
 
                 emit :start
             end
 
             map_source_child.connect_to  planner_child
-            pose_child.pose_samples_port.connect_to        planner_child.robot_pose_port
-            target_pose_child.pose_samples_port.connect_to planner_child.target_pose_port
+            pose_child.connect_to        planner_child
+            target_position_child.connect_to planner_child
             planner_child.connect_to path_follower_child
 
             script do
@@ -55,10 +55,11 @@ module Rock
                 wait_any planner_child.start_event
                 poll do
                     if target_x && target_y
-                        rbs = Types::Base::Samples::RigidBodyState.invalid
-                        rbs.position.x = target_x
-                        rbs.position.y = target_y
-                        writer.write rbs
+                        pos = Types::Base::Position.new
+                        pos.x = target_x
+                        pos.y = target_y
+                        pos.z = 0
+                        writer.write pos
                     end
                 end
             end
