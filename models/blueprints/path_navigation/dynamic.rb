@@ -1,5 +1,5 @@
-require 'rock/models/blueprints/control'
-require 'rock_ugv_nav/models/blueprints/map_gen/map_generator_srv'
+require 'models/blueprints/control'
+require 'models/blueprints/map_gen/map_generator_srv'
 using_task_library 'trajectory_follower'
 
 module Rock
