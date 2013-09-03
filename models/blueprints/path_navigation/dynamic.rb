@@ -1,12 +1,13 @@
 require 'models/blueprints/control'
 require 'models/blueprints/map_gen/map_generator_srv'
+require 'models/blueprints/map_gen/pipeline_base'
 using_task_library 'trajectory_follower'
 
 module Rock
     module PathNavigation
         # Path navigation behaviour that expects a planner that continuously
         # updates the generated path
-        class Dynamic < Syskit::Composition
+        class Dynamic < MapGen::PipelineBase
             # The target X position in the provided map
             #
             # It can be unset, in which case the target_pose child must be given
@@ -32,7 +33,7 @@ module Rock
             add(Base::ControlLoop, :as => 'path_follower').
                 use('controller' => TrajectoryFollower::Task, 'pose' => pose_child)
             # The map generator
-            add Rock::MapGen::TraversabilitySrv, :as => 'traversability_mapping'
+            overload map_source_child, MapGen::TraversabilitySrv
 
             event :start do |context|
                 if !(target_x && target_y) && !find_child_from_role(target_pose_child)
@@ -44,7 +45,7 @@ module Rock
                 emit :start
             end
 
-            traversability_mapping_child.map_port.connect_to planner_child
+            map_source_child.connect_to  planner_child
             pose_child.pose_samples_port.connect_to        planner_child.robot_pose_port
             target_pose_child.pose_samples_port.connect_to planner_child.target_pose_port
             planner_child.connect_to path_follower_child
