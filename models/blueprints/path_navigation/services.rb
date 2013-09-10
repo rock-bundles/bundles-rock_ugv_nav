@@ -1,3 +1,4 @@
+import_types_from 'envire'
 module Rock
     module PathNavigation
         data_service_type 'PathPlannerSrv' do

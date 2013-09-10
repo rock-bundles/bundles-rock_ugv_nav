@@ -1,4 +1,5 @@
 require 'models/blueprints/pose'
+require 'models/blueprints/control'
 import_types_from 'odometry'
 
 module SLAM
