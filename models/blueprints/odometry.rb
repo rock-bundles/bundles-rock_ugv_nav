@@ -26,7 +26,7 @@ module SLAM
         provides OdometrySrv, :as => 'odometry'
 
         specialize odometry_child => ::Odometry::Skid do
-            add Base::JointsControlledSystemSrv, :as => 'joint_status'
+            add Base::JointsStatusSrv, :as => 'joint_status'
             joint_status_child.connect_to odometry_child
         end
 
