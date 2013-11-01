@@ -1,6 +1,8 @@
 require 'models/blueprints/control'
 require 'models/blueprints/map_gen/map_generator_srv'
 require 'models/blueprints/map_gen/pipeline_base'
+require 'models/blueprints/planning'
+
 using_task_library 'trajectory_follower'
 
 module Rock
@@ -29,9 +31,8 @@ module Rock
             add_optional TargetPositionSrv, :as => 'target_position'
             # The path planner
             add DynamicPathPlannerSrv, :as => 'planner'
-            # The path following
-            add(Base::ControlLoop, :as => 'path_follower').
-                use('controller' => TrajectoryFollower::Task, 'pose' => pose_child)
+            add Planning::TrajectoryExecutionSrv, :as => 'trajectory_execution'
+
             # The map generator
             overload map_source_child, MapGen::TraversabilitySrv
 
@@ -48,7 +49,7 @@ module Rock
             map_source_child.connect_to  planner_child
             pose_child.connect_to        planner_child
             target_position_child.connect_to planner_child
-            planner_child.connect_to path_follower_child
+            planner_child.connect_to trajectory_execution_child
 
             script do
                 writer = planner_child.target_pose_port.writer
