@@ -7,7 +7,7 @@ module Rock
         # High level interface for the corridor-based navigation layer
         #
         # It generates a corridor plan from a start position to a goal position,
-        # translated that plan into SingleCorridor tasks, selects a path and selects the
+        # translates that plan into SingleCorridor tasks, selects a path and selects the
         # needed modalities
         class MoveTo < ::MoveTo
             # When the corridor planner has finished, this holds the final plan
@@ -120,7 +120,7 @@ module Rock
                 # it as our child
                 if plan
                     @corridor_plan = plan
-                    # The plan hanlder is a block that should return an array of the
+                    # The plan handler is a block that should return an array of the
                     # form
                     #   [corridor, modality]
                     #
@@ -178,7 +178,7 @@ module Rock
                         # ... And build a sequence
                         if(modality_task.has_event?(:pose_error))
                             puts("Got a Corridor Follower")
-                            #add error handling for corridor_following
+                            # add error handling for corridor_following
                             modality_task.pose_error_event.forward_to self.corridor_following_error_event
                         else
                             puts("Got a corridor Servoer")
@@ -194,8 +194,8 @@ module Rock
                         #TODO success might be wrong here
                         emit :success
                     else
-                        #This task finihes sucessfully if the whol chain of modallities is 
-                        #finished scuessfully
+                        # This task finishes successfully if the whole chain of modalities has
+                        # finished successfully
                         last_corridor.success_event.forward_to success_event
                     end
                 else
