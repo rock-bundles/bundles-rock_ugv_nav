@@ -3,7 +3,7 @@ require 'models/blueprints/pose'
 module Rock
     module UGVNav
         # This composition waits for the robot to move for a given amount
-        # (linear and angular) and emits success when it did
+        # (translation and rotation) and emits success when it did
         #
         # It does not contain the actual motion code, only the monitoring. It
         # can be combined with a motion action in e.g. an action script with
@@ -11,8 +11,8 @@ module Rock
         #     action_script 'go_forward_10m' do
         #         move = task go_forward
         #         monitor = task MotionThresholdMonitor.use(pose_def).
-        #               with_arguments(:linear_threshold => 10,
-        #                              :angular_threshold => nil)
+        #               with_arguments(:translation_threshold => 10,
+        #                              :rotation_threshold => nil)
         #         start move
         #         start monitor
         #         wait monitor.triggered_event
@@ -20,8 +20,8 @@ module Rock
         #     end
         #   
         class MotionThresholdMonitor < Syskit::Composition
-            argument :linear_threshold
-            argument :angular_threshold
+            argument :translation_threshold
+            argument :rotation_threshold
 
             event :triggered
 
@@ -45,9 +45,9 @@ module Rock
                         @current_heading  = pose_sample.orientation.yaw
                         @initial_position ||= current_position
                         @initial_heading  ||= current_heading
-                        if linear_threshold && ((current_position - initial_position).norm > linear_threshold)
+                        if translation_threshold && ((current_position - initial_position).norm > translation_threshold)
                             triggered_event.emit
-                        elsif angular_threshold && ((current_heading - initial_heading).abs > angular_threshold)
+                        elsif rotation_threshold && ((current_heading - initial_heading).abs > rotation_threshold)
                             triggered_event.emit
                         end
                     end
