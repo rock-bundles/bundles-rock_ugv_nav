@@ -14,13 +14,13 @@ module Rock
             #
             # It can be unset, in which case the target_position child must be given
             #
-            # @return [Float
+            # @return [Float]
             argument :target_x, :default => nil
             # The target Y position in the provided map
             #
             # It can be unset, in which case the target_position child must be given
             #
-            # @return [Float
+            # @return [Float]
             argument :target_y, :default => nil
 
             # expose internal errors
