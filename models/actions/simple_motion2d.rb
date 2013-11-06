@@ -34,7 +34,6 @@ module Rock
                     :translation_threshold => nil,
                     :rotation_threshold => nil
 
-                binding.pry
                 motion = ConstantMotion2D.
                     with_arguments(:translation => arguments[:translation_speed],
                                    :rotation => arguments[:rotation_speed]).
