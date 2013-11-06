@@ -52,7 +52,8 @@ module Rock
 
             describe("moves one step in the forward/backward direction").
                 required_arg('distance', 'the distance in meters').
-                required_arg('speed', 'the speed in m/s (use negative to move backwards')
+                required_arg('speed', 'the speed in m/s (use negative to move backwards').
+                returns(StepMove)
             def step_translation(arguments = Hash.new)
                 arguments = Kernel.validate_options arguments, :distance, :speed
                 step_move(:translation_speed => arguments[:speed], :translation_threshold => arguments[:distance])
@@ -60,7 +61,8 @@ module Rock
 
             describe("moves one step in rotation").
                 required_arg('distance', 'the distance in radians').
-                required_arg('speed', 'the speed in rad/s (positive turns counter-clockwise)')
+                required_arg('speed', 'the speed in rad/s (positive turns counter-clockwise)').
+                returns(StepMove)
             def step_rotation(arguments = Hash.new)
                 arguments = Kernel.validate_options arguments, :distance, :speed
                 step_move(:rotation_speed => arguments[:speed], :rotation_threshold => arguments[:distance])
