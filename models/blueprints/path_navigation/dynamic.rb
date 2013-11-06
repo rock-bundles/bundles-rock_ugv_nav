@@ -23,6 +23,15 @@ module Rock
             # @return [Float
             argument :target_y, :default => nil
 
+            # expose internal errors
+            event :planning_failed
+            event :execution_failed
+
+	    # Target might be invalid due to
+	    # setting goal in an obstacle, an obstacle being set on the goal,
+	    # or the goal being set outside of the existing map
+	    event :invalid_target
+
             # The system's pose in the global map
             add Base::PoseSrv, :as => 'pose'
             # The target's pose in the global map
@@ -51,10 +60,23 @@ module Rock
             target_position_child.connect_to planner_child
             planner_child.connect_to trajectory_execution_child
 
+            def self.instanciate(*args)
+                root = super
+                root.trajectory_execution_child.reached_the_end_event.
+                    forward_to root.success_event
+                root.trajectory_execution_child.execution_failed_event.
+                    forward_to root.execution_failed_event
+                root.planner_child.planning_failed_event.
+                    forward_to root.planning_failed_event
+                root.planner_child.invalid_target_event.
+                    forward_to root.invalid_target_event
+                root
+            end
+
             script do
                 writer = planner_child.target_pose_port.writer
-                wait_any planner_child.start_event
-                poll do
+                wait_until_ready writer
+                execute do
                     if target_x && target_y
                         pos = Types::Base::Position.new
                         pos.x = target_x
