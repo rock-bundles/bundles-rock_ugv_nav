@@ -1,3 +1,5 @@
+require 'models/blueprints/pose'
+
 module Rock
     module UGVNav
         # This composition waits for the robot to move for a given amount
