@@ -22,25 +22,25 @@ module Rock
             #
             # @return [Float]
             argument :target_y, :default => nil
-	    # The final precision that should be achieved in m, default is 0.5 m
-	    argument :target_precision_in_m, :default => 0.5
+            # The final precision that should be achieved in m, default is 0.5 m
+            argument :target_precision_in_m, :default => 0.5
 
-	    # Trigger the timeout when entering the distance to the object
-	    argument :timeout_trigger_radius_in_m, :default => 5
+            # Trigger the timeout when entering the distance to the object
+            argument :timeout_trigger_radius_in_m, :default => 5
 
-	    # A timeout to make sure the robot does not inifinitely try to achieve
-	    # the final precision -- timeout start when entering the radius default it 2 min
-	    argument :timeout_in_s, :default => 120
+            # A timeout to make sure the robot does not inifinitely try to achieve
+            # the final precision -- timeout start when entering the radius default it 2 min
+            argument :timeout_in_s, :default => 120
 
             # expose internal errors
             event :planning_failed
             event :execution_failed
 
-	    # Target might be invalid due to
-	    # setting goal in an obstacle, an obstacle being set on the goal,
-	    # or the goal being set outside of the existing map
-	    event :invalid_target
-	    event :precision_timeout
+            # Target might be invalid due to
+            # setting goal in an obstacle, an obstacle being set on the goal,
+            # or the goal being set outside of the existing map
+            event :invalid_target
+            event :precision_timeout
 
             # The system's pose in the global map
             add Base::PoseSrv, :as => 'pose'
@@ -83,10 +83,10 @@ module Rock
                 root
             end
 
-	    @timeout = nil
+            @timeout = nil
 
             script do
-		reader = pose_child.pose_samples_port.reader
+                reader = pose_child.pose_samples_port.reader
                 writer = planner_child.target_pose_port.writer
                 wait_until_ready writer
                 execute do
@@ -98,25 +98,26 @@ module Rock
                         writer.write pos
                     end
                 end
-
-		poll do
-		    if pose = reader.read_new
-			if !@timeout && (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 <= arguments[:timeout_trigger_radius_in_m]**2
-			    Robot.info "Trigger radius entered: timeout from now: #{arguments[:timeout_in_s]}"
-			    @timeout = Time.now 
-			end
-
-                        distance_error = (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 
-			if distance_error <= arguments[:target_precision_in_m]**2
-			    Robot.info "Target pose reached: #{Math.sqrt(distance_error)} m away from goal"
-			    emit :success
-			elsif @timeout && Time.now - @timeout > arguments[:timeout_in_s]
-			    Robot.warn "Target pose precision timeout: still #{Math.sqrt(distance_error)} m away from goal"
-			    emit :precision_timeout
-			end
-		    end
-		end
             end
+
+            poll do
+                if pose = reader.read_new
+                    if !@timeout && (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 <= arguments[:timeout_trigger_radius_in_m]**2
+                        Robot.info "Trigger radius entered: timeout from now: #{arguments[:timeout_in_s]}"
+                        @timeout = Time.now
+                    end
+
+                    distance_error = (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2
+                    if distance_error <= arguments[:target_precision_in_m]**2
+                        Robot.info "Target pose reached: #{Math.sqrt(distance_error)} m away from goal"
+                        emit :success
+                    elsif @timeout && Time.now - @timeout > arguments[:timeout_in_s]
+                        Robot.warn "Target pose precision timeout: still #{Math.sqrt(distance_error)} m away from goal"
+                        emit :precision_timeout
+                    end
+                end
+            end
+
         end
     end
 end
