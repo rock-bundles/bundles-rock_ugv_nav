@@ -78,6 +78,8 @@ module Rock
                     forward_to root.planning_failed_event
                 root.planner_child.invalid_target_event.
                     forward_to root.invalid_target_event
+                root.precision_timeout_event.
+                    forward_to root.failed_event
                 root
             end
 
