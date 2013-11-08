@@ -87,6 +87,16 @@ module Rock
                 root
             end
 
+            def initialize(arguments = Hash.new)
+                super
+
+                # Making sure that when option with nil value are passed 
+                # sane defaults apply
+                arguments[:target_precision_in_m] ||= 0
+                arguments[:timeout_trigger_radius_in_m] ||= 2
+                arguments[:timeout_in_s] ||= 120
+            end
+
             script do
                 reader = pose_child.pose_samples_port.reader
                 writer = planner_child.target_pose_port.writer
@@ -103,12 +113,12 @@ module Rock
 
                 poll do
                     if pose = reader.read_new
-                        if !@timeout && (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 <= arguments[:timeout_trigger_radius_in_m]**2
+                        if !@timeout && (pose.position[0] - arguments[:target_x])**2 + (pose.position[1] - arguments[:target_y])**2 <= arguments[:timeout_trigger_radius_in_m]**2
                             Robot.info "Trigger radius entered: timeout from now: #{arguments[:timeout_in_s]}"
                             @timeout = Time.now
                         end
 
-                        distance_error = (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2
+                        distance_error = (pose.position[0] - arguments[:target_x])**2 + (pose.position[1] - arguments[:target_y])**2
                         if distance_error <= arguments[:target_precision_in_m]**2
                             Robot.info "Target pose reached: #{Math.sqrt(distance_error)} m away from goal"
                             emit :success
@@ -127,6 +137,7 @@ module Rock
                         # Trigger the generation of a new map
                         if running
                             @map_triggered = true
+                            Robot.info "PathNavigation::Dynamic: triggering map generation [should happen once]"
                             map_source_child.trigger_event.emit
                         end
                     end
