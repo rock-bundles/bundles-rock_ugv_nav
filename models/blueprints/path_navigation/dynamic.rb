@@ -80,6 +80,9 @@ module Rock
                     forward_to root.invalid_target_event
                 root.precision_timeout_event.
                     forward_to root.failed_event
+                # If the trajectory reached the goal the global position actually reached its destination
+                root.trajectory_execution_child.execution_success_event.
+                    forward_to root.success_event
                 root
             end
 
