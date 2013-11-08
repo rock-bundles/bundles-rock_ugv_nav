@@ -83,8 +83,6 @@ module Rock
                 root
             end
 
-            @timeout = nil
-
             script do
                 reader = pose_child.pose_samples_port.reader
                 writer = planner_child.target_pose_port.writer
@@ -98,26 +96,38 @@ module Rock
                         writer.write pos
                     end
                 end
-            end
 
-            poll do
-                if pose = reader.read_new
-                    if !@timeout && (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 <= arguments[:timeout_trigger_radius_in_m]**2
-                        Robot.info "Trigger radius entered: timeout from now: #{arguments[:timeout_in_s]}"
-                        @timeout = Time.now
+                poll do
+                    if pose = reader.read_new
+                        if !@timeout && (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2 <= arguments[:timeout_trigger_radius_in_m]**2
+                            Robot.info "Trigger radius entered: timeout from now: #{arguments[:timeout_in_s]}"
+                            @timeout = Time.now
+                        end
+
+                        distance_error = (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2
+                        if distance_error <= arguments[:target_precision_in_m]**2
+                            Robot.info "Target pose reached: #{Math.sqrt(distance_error)} m away from goal"
+                            emit :success
+                        elsif @timeout && Time.now - @timeout > arguments[:timeout_in_s]
+                            Robot.warn "Target pose precision timeout: still #{Math.sqrt(distance_error)} m away from goal"
+                            emit :precision_timeout
+                        end
                     end
 
-                    distance_error = (pose.position[0] - target_x)**2 + (pose.position[1] - target_y)**2
-                    if distance_error <= arguments[:target_precision_in_m]**2
-                        Robot.info "Target pose reached: #{Math.sqrt(distance_error)} m away from goal"
-                        emit :success
-                    elsif @timeout && Time.now - @timeout > arguments[:timeout_in_s]
-                        Robot.warn "Target pose precision timeout: still #{Math.sqrt(distance_error)} m away from goal"
-                        emit :precision_timeout
+                    # Make sure planner child is up and running and trajectory_execution_child
+                    if !@map_triggered
+                        running = self.generated_subgraph(Roby::TaskStructure::Dependency).all? do |task|
+                            task.running?
+                        end
+
+                        # Trigger the generation of a new map
+                        if running
+                            @map_triggered = true
+                            map_source_child.trigger_event.emit
+                        end
                     end
                 end
             end
-
         end
     end
 end
