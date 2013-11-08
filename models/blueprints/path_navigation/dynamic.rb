@@ -22,8 +22,9 @@ module Rock
             #
             # @return [Float]
             argument :target_y, :default => nil
-            # The final precision that should be achieved in m, default is 0.5 m
-            argument :target_precision_in_m, :default => 0.5
+            # The final precision that should be achieved in m, default is 0 m
+            # So that the trajectory_planning child defines the success criteria
+            argument :target_precision_in_m, :default => 0
 
             # Trigger the timeout when entering the distance to the object
             argument :timeout_trigger_radius_in_m, :default => 5
