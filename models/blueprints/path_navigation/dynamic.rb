@@ -43,6 +43,22 @@ module Rock
             event :invalid_target
             event :precision_timeout
 
+            on :planning_failed do |event|
+                Robot.info "PathPlanning: internal planning failed"
+            end
+
+            on :execution_failed do |event|
+                Robot.info "PathPlanning: internal execution failed"
+            end
+
+            on :invalid_target do |event|
+                Robot.info "PathPlanning: invalid target"
+            end
+
+            on :precision_timeout do |event|
+                Robot.info "PathPlanning: precision timeout"
+            end
+
             # The system's pose in the global map
             add Base::PoseSrv, :as => 'pose'
             # The target's pose in the global map
