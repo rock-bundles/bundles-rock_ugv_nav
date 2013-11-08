@@ -26,8 +26,8 @@ module Rock
             # So that the trajectory_planning child defines the success criteria
             argument :target_precision_in_m, :default => 0
 
-            # Trigger the timeout when entering the distance to the object
-            argument :timeout_trigger_radius_in_m, :default => 5
+            # Trigger the timeout when entering the distance to the object, default 2 m
+            argument :timeout_trigger_radius_in_m, :default => 2
 
             # A timeout to make sure the robot does not inifinitely try to achieve
             # the final precision -- timeout start when entering the radius default it 2 min
