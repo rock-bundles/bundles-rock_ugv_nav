@@ -100,6 +100,10 @@ module Rock
                 # If the trajectory reached the goal the global position actually reached its destination
                 root.trajectory_execution_child.execution_success_event.
                     forward_to root.success_event
+
+                # Planning fail will trigger a complete fail
+                root.planning_failed_event.
+                    forward_to root.failed_event
                 root
             end
 
