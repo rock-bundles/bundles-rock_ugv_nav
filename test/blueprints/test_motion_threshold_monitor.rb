@@ -2,26 +2,19 @@ require 'syskit/test'
 require 'models/blueprints/motion_threshold_monitor'
 
 describe Rock::UGVNav::MotionThresholdMonitor do
-    attr_reader :pose_provider_m, :rbs
+    attr_reader :rbs
 
     before do
-        @pose_provider_m = stub_syskit_task_context_model 'PoseProvider' do
-            output_port 'pose', '/base/samples/RigidBodyState'
-            provides Base::PoseSrv, :as => 'pose'
-        end
-        stub_syskit_deployment_model(pose_provider_m)
-
         @rbs = Types::Base::Samples::RigidBodyState.invalid
         rbs.position = Eigen::Vector3.new(0, 0, 0)
         rbs.orientation = Eigen::Quaternion.Identity
     end
 
     def deploy_test_network(arguments)
-        test = Rock::UGVNav::MotionThresholdMonitor.use(@pose_provider_m).
-            with_arguments(arguments)
-        test = syskit_run_deployer(test)
-        test = syskit_start_component(test)
-        port = test.pose_child.orocos_task.pose
+        test = stub_deploy_and_start_composition(
+            Rock::UGVNav::MotionThresholdMonitor.
+                with_arguments(arguments))
+        port = test.pose_child.pose_samples_port.to_orocos_port
         port.write rbs
         process_events
         return test, port
