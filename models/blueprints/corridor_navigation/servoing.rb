@@ -33,7 +33,7 @@ module Rock
             # the map is written to the corridor servoing
             event :initial_map_written
 
-            on :start do
+            on :start do |_|
                 if initial_map
                     map, map_pose, map_id = *initial_map
                     corridor_servoing_child.execute do
