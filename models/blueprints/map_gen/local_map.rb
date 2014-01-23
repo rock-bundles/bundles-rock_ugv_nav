@@ -8,8 +8,8 @@ module Rock
             add Base::PoseSrv, :as => 'pose'
             add(CorridorNavigation::ServoingTask, :as => 'generator').
                 with_arguments(:initial_heading => nil)
-            pose_child.pose_samples_port.connect_to generator_child.odometry_samples_port
-            laser_child.connect_to generator_child
+            #pose_child.pose_samples_port.connect_to generator_child.odometry_samples_port
+            laser_child.connect_to generator_child.scan_samples_port
         end
     end
 end

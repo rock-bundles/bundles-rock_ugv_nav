@@ -25,15 +25,15 @@ module Rock
             add(Base::ControlLoop, :as => 'control').
                 use('pose' => pose_child, 'controller' => TrajectoryFollower::Task)
             add_main_task(CorridorNavigation::ServoingTask, :as => 'servoing')
-            pose_child.pose_samples_port.connect_to servoing_child.odometry_samples_port
-            laser_child.connect_to servoing_child
+            #pose_child.pose_samples_port.connect_to servoing_child.odometry_samples_port
+            laser_child.connect_to servoing_child.scan_samples_port
             servoing_child.connect_to control_child
 
             # Event emitted if the initial_map argument is set to a non-nil value, once
             # the map is written to the corridor servoing
             event :initial_map_written
 
-            on :start do
+            on :start do |_|
                 if initial_map
                     map, map_pose, map_id = *initial_map
                     corridor_servoing_child.execute do
