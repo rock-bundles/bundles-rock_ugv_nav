@@ -27,11 +27,11 @@ module Rock
             argument :target_precision_in_m, :default => 0
 
             # Trigger the timeout when entering the distance to the object, default 2 m
-            argument :timeout_trigger_radius_in_m, :default => 2
+            argument :timeout_trigger_radius_in_m, :default => 7
 
             # A timeout to make sure the robot does not inifinitely try to achieve
             # the final precision -- timeout start when entering the radius default it 2 min
-            argument :timeout_in_s, :default => 120
+            argument :timeout_in_s, :default => 240
 
             # expose internal errors
             event :planning_failed
