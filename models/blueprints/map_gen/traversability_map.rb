@@ -4,11 +4,17 @@ using_task_library 'corridor_planner'
 module Rock
     module MapGen
         class TraversabilityMap < PipelineBase
+            event :trigger
+
             overload map_source_child, MLSSrv
             add_main_task CorridorPlanner::Traversability, :as => 'traversability_builder'
             export traversability_builder_child.traversability_map_port
             map_source_child.map_port.connect_to traversability_builder_child.mls_map_port
             provides TraversabilitySrv, :as => 'traversability_map'
+
+            on :trigger do |event|
+                map_source_child.trigger_event.emit
+            end
         end
     end
 end
